@@ -16,16 +16,16 @@ let count = 0;
 io.on('connection', (socket) => {
     console.log('connection established');
 
-    socket.emit('welcome', `Hello user${count}`);
+    socket.emit('welcome', `Welcome user${count}`);
     count++;
-    
-    // socket.on('connect', () => {
-    //     count++;
-    //     io.emit('connect', () => {
-            
-    //     })
-    // })
+
+    socket.on('sendMessage', (message) => {
+        console.log(`Message: ${message}`)
+        io.emit('message', message);
+    })
 })
+
+
 
 server.listen(port, () => {
     console.log(`Server up on port ${port}`);
