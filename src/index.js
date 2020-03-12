@@ -18,6 +18,7 @@ io.on('connection', (socket) => {
 
     socket.emit('welcome', `Hello user${count}`);
     count++;
+    
     // socket.on('connect', () => {
     //     count++;
     //     io.emit('connect', () => {
