@@ -8,9 +8,20 @@ socket.on('message', (message) => {
     console.log(message);
 });
 
-document.querySelector('#message-form').addEventListener('submit', (e) => {
+const $form = document.querySelector('#message-form');
+const $input = document.querySelector('input');
+const $button = document.querySelector('button');
+
+
+$form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    var txt = e.target.elements.txtBox.value;
-    socket.emit('sendMessage', txt);
+    $button.setAttribute('disabled','disabled');
+
+    socket.emit('sendMessage', $input.value, (message) => {
+        $button.removeAttribute('disabled');
+        $input.value = '';
+        $input.focus();
+        console.log('Message received', message);
+    });
 });

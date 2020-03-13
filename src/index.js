@@ -19,9 +19,13 @@ io.on('connection', (socket) => {
     socket.emit('welcome', `Welcome user${count}`);
     count++;
 
-    socket.on('sendMessage', (message) => {
-        console.log(`Message: ${message}`)
+    socket.on('sendMessage', (message,callback) => {
         io.emit('message', message);
+        callback('Got it!');
+    })
+
+    socket.on('disconnect', () => {
+        io.emit('message','User disconnected');
     })
 })
 
