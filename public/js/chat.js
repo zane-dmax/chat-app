@@ -1,17 +1,22 @@
 const socket = io();
 
-socket.on('welcome', (message) => {
-    console.log(message);
-});
-
-socket.on('message', (message) => {
-    console.log(message);
-});
-
 const $form = document.querySelector('#message-form');
 const $input = document.querySelector('input');
 const $button = document.querySelector('button');
+const $messages = document.querySelector('#messages');
 
+const tplMessage = document.querySelector('#tplMessage').innerHTML;
+
+const {username, room} = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
+socket.on('message', (message) => {
+    console.log(message);
+    const html = Mustache.render(tplMessage, {
+        message: message.text,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    });
+    $messages.insertAdjacentHTML('beforeend', html);
+});
 
 $form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -25,3 +30,5 @@ $form.addEventListener('submit', (e) => {
         console.log('Message received', message);
     });
 });
+
+socket.emit('join', { username, room })
