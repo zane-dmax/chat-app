@@ -17,20 +17,33 @@ io.on('connection', (socket) => {
 
     socket.on('join', ({ username, room }) => {
         socket.join(room);
+        socket.username = username;
 
-        socket.emit('message', generateMessage(`Welcome ${username}`));
-        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined`));
+        var strUsers = '';
+        const socks = Object.keys(io.sockets.adapter.rooms[room].sockets)
+        socks.forEach(socketid => strUsers = strUsers + io.sockets.sockets[socketid].username + '\r\n')
+        console.log(strUsers)
+
+        socket.emit('message', generateMessage('Admin',`Welcome ${username}`));
+        socket.broadcast.to(room).emit('message', generateMessage('Admin',`${username} has joined`));
     });
 
     socket.on('sendMessage', (message,callback) => {
         console.log(Object.keys(socket.rooms)[0])
-        io.to(Object.keys(socket.rooms)[0]).emit('message', generateMessage(message));
+        io.to(Object.keys(socket.rooms)[0]).emit('message', generateMessage(socket.username,message));
         callback('Got it!');
     });
 
     socket.on('disconnect', () => {
-        io.to(Object.keys(socket.rooms)[0]).emit('message','User disconnected');
-        socket.leave(Object.keys(socket.rooms)[0]);
+        const room = Object.keys(socket.rooms)[0];
+        io.to(room).emit('message','User disconnected');
+        socket.leave(room);
+
+        var strUsers = '';
+        const socks = Object.keys(io.sockets.adapter.rooms[room].sockets)
+        socks.forEach(socketid => strUsers = strUsers + io.sockets.sockets[socketid].username + '\r\n')
+        console.log(strUsers)
+        io.to(room).emit('userList',strUsers);
     });
 });
 

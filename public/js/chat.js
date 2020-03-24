@@ -12,6 +12,7 @@ const {username, room} = Qs.parse(location.search, { ignoreQueryPrefix: true })
 socket.on('message', (message) => {
     console.log(message);
     const html = Mustache.render(tplMessage, {
+        username: message.username,
         message: message.text,
         createdAt: moment(message.createdAt).format('h:mm a')
     });
